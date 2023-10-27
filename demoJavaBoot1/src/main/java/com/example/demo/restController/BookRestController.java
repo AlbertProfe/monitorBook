@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.UUID;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 
@@ -20,36 +22,48 @@ public class BookRestController {
 
     @Autowired
     BookService bookService;
+
+    @Autowired
     ActivityLogService activityLogService;
 
     @GetMapping("/getAllBooks")
     public ResponseEntity<Iterable<Book>> getAllBooks(HttpServletRequest request){
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        request.getRemoteAddr();
+        String ip = request.getRemoteAddr();
         ArrayList<Book> booksFromService = bookService.getAllBooks();
         ActivityLog activityLog = new ActivityLog();
 
+        String uniqueID = UUID.randomUUID().toString();
+
         activityLog.setOperationMethod("getAllBooks");
-        activityLog.setDomain("");
-        activityLog.setId("");
-        activityLog.setIp("");
-        //activityLog.setTime("");
-        activityLog.setUser("");
-        //activityLog.setStatus("");
-        activityLog.setEndpoint("");
+        activityLog.setDomain("books");
+        activityLog.setId(uniqueID);
+        activityLog.setIp(ip);
+        activityLog.setTime(timestamp);
+        activityLog.setUser("anonymous");
+        activityLog.setStatus("success");
+        activityLog.setEndpoint("api/v1/book/getAllBooks");
+        activityLog.setVersion("1.0");
 
         activityLogService.addActivityLog(activityLog);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("operation", activityLog.getOperationMethod());
-        headers.add("version", "api 1.0");
-        headers.add("domain", "book");
-        headers.add("status", "success");
-        headers.add("timestamps", "n/a");
+        headers.add("version", activityLog.getVersion());
+        headers.add("domain", activityLog.getDomain());
+        headers.add("status", activityLog.getStatus());
+        headers.add("timestamp", activityLog.getTime().toString());
+        headers.add("id", activityLog.getId());
+        headers.add("user", activityLog.getUser());
+        headers.add("status", activityLog.getStatus());
+        headers.add("endpoint", activityLog.getEndpoint());
+        headers.add("ip", activityLog.getIp());
+
+
         //headers.add("qtyObjects", booksFromService.size() );
-
-
+        Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
+        //System.out.println((long)timestamp2 - (long)timestamp);
         return ResponseEntity.accepted().headers(headers).body(booksFromService);
     }
 

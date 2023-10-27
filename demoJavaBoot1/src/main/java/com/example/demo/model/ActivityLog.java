@@ -1,22 +1,26 @@
 package com.example.demo.model;
 
+import java.sql.Timestamp;
+
 public class ActivityLog {
 
     private String id;
     private String ip;
     private String operationMethod;
     private String user;
-    private long time; // Assuming time is represented as a Unix timestamp (long)
-    private int status;
+    private Timestamp time; // Assuming time is represented as a Unix timestamp (long)
+    private String status;
     private String endpoint;
     private String domain;
+
+    private String version;
 
     // Constructors
     public ActivityLog() {
         // Default constructor
     }
 
-    public ActivityLog(String id, String ip, String operationMethod, String user, long time, int status, String endpoint, String domain) {
+    public ActivityLog(String version, String id, String ip, String operationMethod, String user, Timestamp time, String status, String endpoint, String domain) {
         this.id = id;
         this.ip = ip;
         this.operationMethod = operationMethod;
@@ -25,6 +29,7 @@ public class ActivityLog {
         this.status = status;
         this.endpoint = endpoint;
         this.domain = domain;
+        this.version = version;
     }
 
     public String getId() {
@@ -33,6 +38,14 @@ public class ActivityLog {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     // Getters and Setters
@@ -60,19 +73,19 @@ public class ActivityLog {
         this.user = user;
     }
 
-    public long getTime() {
+    public Timestamp getTime() {
         return time;
     }
 
-    public void setTime(long time) {
+    public void setTime(Timestamp time) {
         this.time = time;
     }
 
-    public int getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
