@@ -2,25 +2,29 @@ package com.example.demo.model;
 
 import java.sql.Timestamp;
 
+
 public class ActivityLog {
 
     private String id;
     private String ip;
     private String operationMethod;
+    private String operation;
     private String user;
     private Timestamp time; // Assuming time is represented as a Unix timestamp (long)
     private String status;
     private String endpoint;
     private String domain;
+    private String restMethod;
 
     private String version;
 
     // Constructors
     public ActivityLog() {
+        this.version = "1.0";
         // Default constructor
     }
 
-    public ActivityLog(String version, String id, String ip, String operationMethod, String user, Timestamp time, String status, String endpoint, String domain) {
+    public ActivityLog(String restMethod, String id, String ip, String operationMethod, String user, Timestamp time, String status, String endpoint, String domain) {
         this.id = id;
         this.ip = ip;
         this.operationMethod = operationMethod;
@@ -29,7 +33,15 @@ public class ActivityLog {
         this.status = status;
         this.endpoint = endpoint;
         this.domain = domain;
-        this.version = version;
+        this.restMethod = restMethod;
+    }
+
+    public String getRestMethod() {
+        return restMethod;
+    }
+
+    public void setRestMethod(String restMethod) {
+        this.restMethod = restMethod;
     }
 
     public String getId() {
@@ -113,6 +125,7 @@ public class ActivityLog {
                 ", user='" + user + '\'' +
                 ", time=" + time +
                 ", status=" + status +
+                ", version=" + version +
                 ", endpoint='" + endpoint + '\'' +
                 ", domain='" + domain + '\'' +
                 '}';

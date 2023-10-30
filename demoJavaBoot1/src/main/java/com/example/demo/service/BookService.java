@@ -57,9 +57,6 @@ public class BookService {
     public void deleteById(String id) {
     }
 
-    public void deleteAllBoooks() {
-    }
-
     public boolean  checkBookById (){
 
         // check if book is in db
@@ -74,6 +71,8 @@ public class BookService {
 
     public Book createBook(Book book) {
 
-        return book;
+        boolean bookAdded = books.add(book);
+
+        if (bookAdded) return book; else return null;
     }
 }
