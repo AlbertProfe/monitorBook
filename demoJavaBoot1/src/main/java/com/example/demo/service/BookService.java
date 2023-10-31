@@ -55,8 +55,9 @@ public class BookService {
 
     public boolean deleteAllBooks(){
         //delete all books with clear
-        int qty = qtyBooks();
+
         books.clear();
+        int qty = qtyBooks();
         boolean deletedBooks = true;
 
         if ( qty > 0) deletedBooks = false ;

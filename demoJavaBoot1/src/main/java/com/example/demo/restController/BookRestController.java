@@ -79,15 +79,16 @@ public class BookRestController {
     public ResponseEntity deleteAllBooks (HttpServletRequest request){
 
        // query to delete all books
-       boolean deleted = bookService.deleteAllBooks();
-       int qty = bookService.qtyBooks();
+        int qty = bookService.qtyBooks();
+        boolean deleted = bookService.deleteAllBooks();
+
 
         ActivityLog activityLog = Utilities.createLog(request,"deleteAllBooks",
                 "books", "processing", "api/v1/book/deleteAllBooks", "DELETE");
 
         HttpHeaders headers = Utilities.createHeader(activityLog);
 
-        if (deleted == true) {
+        if (deleted) {
             activityLog.setStatus("success");
             activityLogService.addActivityLog(activityLog);
             headers.add("status", "success");
