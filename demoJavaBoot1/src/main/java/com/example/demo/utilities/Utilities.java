@@ -14,7 +14,8 @@ public class Utilities {
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         String ip = request.getRemoteAddr();
-        ActivityLog activityLog = new ActivityLog();
+        ActivityLog activityLog = null;
+        activityLog = new ActivityLog();
         //System.out.println(activityLog);
 
         String uniqueID = UUID.randomUUID().toString();
@@ -36,18 +37,19 @@ public class Utilities {
 
     public static HttpHeaders createHeader(ActivityLog activityLog){
 
-        HttpHeaders headers = new HttpHeaders();
+        HttpHeaders headers = null;
+        headers = new HttpHeaders();
 
-        headers.add("operation", activityLog.getOperationMethod());
-        headers.add("version", activityLog.getVersion());
-        headers.add("domain", activityLog.getDomain());
-        headers.add("status", activityLog.getStatus());
-        headers.add("timestamp", activityLog.getTime().toString());
+        headers.add("Operation", activityLog.getOperationMethod());
+        headers.add("Version", activityLog.getVersion());
+        headers.add("Domain", activityLog.getDomain());
+        headers.add("Status", activityLog.getStatus());
+        headers.add("TimestampServer", activityLog.getTime().toString());
         headers.add("id", activityLog.getId());
-        headers.add("user", activityLog.getUser());
+        headers.add("User", activityLog.getUser());
         headers.add("endpoint", activityLog.getEndpoint());
-        headers.add("ip", activityLog.getIp());
-        headers.add("restMethod", activityLog.getRestMethod());
+        headers.add("IPAddress", activityLog.getIp());
+        headers.add("RestMethod", activityLog.getRestMethod());
 
         return headers;
 

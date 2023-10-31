@@ -27,61 +27,103 @@ public class BookRestController {
     @GetMapping("/getAllBooks")
     public ResponseEntity<Iterable<Book>> getAllBooks(HttpServletRequest request){
 
+        // query to service to get all books
         ArrayList<Book> booksFromService = bookService.getAllBooks();
-
+        // call Utilities to create a log
         ActivityLog activityLog = Utilities.createLog(request,"getAllBooks",
-                "books", "success", "api/v1/book/getAllBooks", "GET");
-        if ( activityLog != null) {
+                "books", "processing", "/api/v1/book/getAllBooks", "GET");
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+        //Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
+        //System.out.println("Lapsed time: " + ( timestamp2.getNanos() - timestamp.getNanos()));
+
+        if (booksFromService != null) {
+            activityLog.setStatus("success");
             activityLogService.addActivityLog(activityLog);
-
-            HttpHeaders headers = Utilities.createHeader(activityLog);
-
-            //HttpHeaders headers = new HttpHeaders();
-            //Timestamp timestamp2 = new Timestamp(System.currentTimeMillis());
-            //System.out.println("Lapsed time: " + ( timestamp2.getNanos() - timestamp.getNanos()));
+            headers.add("status", "success");
             return ResponseEntity.accepted().headers(headers).body(booksFromService);
-
-        } else return ResponseEntity.accepted().body(booksFromService);
-
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(booksFromService);
+        }
     }
 
     //CRUD: get by id
     @GetMapping("/getBookById/{id}")
-    public Book getBookById(@PathVariable  String  id){
+    public ResponseEntity<Book> getBookById(HttpServletRequest request, @PathVariable  String  id){
 
-        //boolean result = bookService.checkBookById();
-        // reference variable creation book
-        Book book = null;
         // call to service for find by id
-        book = bookService.findBookById(id);
+        Book book = bookService.findBookById(id);
 
-      return book;
+        ActivityLog activityLog = Utilities.createLog(request,"getBookById",
+                "books", "processing", "api/v1/book/getBookById", "GET");
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        if (book != null) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            return ResponseEntity.accepted().headers(headers).body(book);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(book);
+        }
     }
 
     //CRUD: delete all
     @DeleteMapping("/deleteAllBooks")
-    public void deleteAllBooks (){
+    public ResponseEntity deleteAllBooks (HttpServletRequest request){
 
-        // call to service
-        //
-        bookService.deleteAllBooks();
+       // query to delete all books
+       boolean deleted = bookService.deleteAllBooks();
+       int qty = bookService.qtyBooks();
+
+        ActivityLog activityLog = Utilities.createLog(request,"deleteAllBooks",
+                "books", "processing", "api/v1/book/deleteAllBooks", "DELETE");
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        if (deleted == true) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            headers.add("qtyObjectsDeleted", String.valueOf(qty));
+            return ResponseEntity.accepted().headers(headers).body(null);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(null);
+        }
     }
 
     //CRUD: delete by id
     @DeleteMapping("/deleteBookById/{id}")
-    public String deleteBookById (String id){
+    public ResponseEntity<Book> deleteBookById (HttpServletRequest request, @PathVariable String id){
 
-        // check if book is in db
+        Book book = bookService.deleteById(id);
+        ActivityLog activityLog = Utilities.createLog(request,"deleteBookById",
+                "books", "processing", "api/v1/book/deleteBookById", "DELETE");
 
-        // if does not exist ERROR
+        HttpHeaders headers = Utilities.createHeader(activityLog);
 
-        // call to service bookService.deleteById(id)
+        if (book != null) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            return ResponseEntity.accepted().headers(headers).body(book);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(book);
+        }
 
-        bookService.deleteById(id);
 
-        // RESULT ....
-
-        return "timestamp or deletion confirmation";
     }
 
     //CRUD: create
@@ -92,37 +134,48 @@ public class BookRestController {
                 "books", "fail", "api/v1/book/createBook", "POST");
 
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("operation", activityLog.getOperationMethod());
-        headers.add("version", activityLog.getVersion());
-        headers.add("domain", activityLog.getDomain());
-        headers.add("timestamp", activityLog.getTime().toString());
-        headers.add("id", activityLog.getId());
-        headers.add("user", activityLog.getUser());
-        headers.add("endpoint", activityLog.getEndpoint());
-        headers.add("ip", activityLog.getIp());
-        headers.add("restMethod", activityLog.getRestMethod());
+        HttpHeaders headers = Utilities.createHeader(activityLog);
 
         Book bookCreated = bookService.createBook(book);
 
+
         if (bookCreated != null) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
             headers.add("status", "success");
-            if (activityLog != null) {
-                activityLog.setStatus("book created");
-                activityLogService.addActivityLog(activityLog);
-            }
-            return ResponseEntity.accepted().headers(headers).body(bookCreated);
+            return ResponseEntity.accepted().headers(headers).body(book);
         } else {
-            if (activityLog != null) {
-                activityLog.setStatus("book not created");
-                activityLogService.addActivityLog(activityLog);
-            }
-            headers.add("status", "not created");
-            return ResponseEntity.accepted().body(null);
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(book);
         }
     }
 
     //CRUD: update
+    @PutMapping("/updateBook/{id}")
+    public ResponseEntity<Book> updateBook (HttpServletRequest request, @PathVariable String id,
+                                            @RequestBody Book book){
+
+        Book bookToUpdate = bookService.updateBook(id, book);
+
+        ActivityLog activityLog = Utilities.createLog(request,"updateBook",
+                "books", "processing", "api/v1/book/updateBook", "PUT");
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        if (bookToUpdate != null) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            return ResponseEntity.accepted().headers(headers).body(book);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(book);
+        }
+    }
 
 
 

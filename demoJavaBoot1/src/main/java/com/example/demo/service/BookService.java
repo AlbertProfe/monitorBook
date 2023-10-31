@@ -49,30 +49,52 @@ public class BookService {
         return bookFound;
     }
 
-    public void deleteAllBooks(){
+    public int qtyBooks (){
+        return books.size();
+    }
+
+    public boolean deleteAllBooks(){
+        //delete all books with clear
+        int qty = qtyBooks();
         books.clear();
-        //to-do delete all books with sql
+        boolean deletedBooks = true;
+
+        if ( qty > 0) deletedBooks = false ;
+        //else null;
+        return deletedBooks;
     }
 
-    public void deleteById(String id) {
+    public Book deleteById(String id) {
+
+        Book book = findBookById(id);
+        boolean boodRemoved = false;
+
+        if (book != null) {
+
+            boodRemoved = books.remove(book);
+            return book;
+
+        } else return null;
     }
-
-    public boolean  checkBookById (){
-
-        // check if book is in db
-
-        // if does not exist FALSE
-
-        // if exist TRUE
-
-        return true;
-    }
-
 
     public Book createBook(Book book) {
 
         boolean bookAdded = books.add(book);
 
         if (bookAdded) return book; else return null;
+    }
+
+    public Book updateBook (String id, Book book){
+
+        Book bookFound = findBookById(id);
+        boolean boodUpdated = false;
+
+        if (bookFound != null) {
+            int index = books.indexOf(bookFound);
+            Book bookUpdated = books.set(index, book);
+            return bookUpdated;
+
+        } else return null;
+
     }
 }
