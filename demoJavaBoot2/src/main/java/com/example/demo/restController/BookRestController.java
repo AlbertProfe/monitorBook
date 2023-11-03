@@ -172,12 +172,12 @@ public class BookRestController {
             activityLog.setStatus("success");
             activityLogService.addActivityLog(activityLog);
             headers.add("status", "success");
-            return ResponseEntity.accepted().headers(headers).body(book);
+            return ResponseEntity.accepted().headers(headers).body(bookToUpdate);
         } else {
             activityLog.setStatus("fail");
             activityLogService.addActivityLog(activityLog);
             headers.add("status", "fail");
-            return ResponseEntity.internalServerError().headers(headers).body(book);
+            return ResponseEntity.internalServerError().headers(headers).body(bookToUpdate);
         }
     }
 
