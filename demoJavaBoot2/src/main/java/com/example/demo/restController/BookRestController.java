@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.UUID;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -48,6 +49,139 @@ public class BookRestController {
             return ResponseEntity.internalServerError().headers(headers).body(booksFromService);
         }
     }
+
+
+
+    //CRUD: get by id
+    @GetMapping("/getBookById/{id}")
+    public ResponseEntity<Book> getBookById(HttpServletRequest request, @PathVariable  String  id){
+
+        // call to service for find by id
+        Optional<Book> book = bookService.findBookById(id);
+
+        ActivityLog activityLog = Utilities.createLog(request,"getBookById",
+                "books", "processing", "api/v1/book/getBookById", "GET");
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        if (book != null) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            return ResponseEntity.accepted().headers(headers).body(book.get());
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(null);
+        }
+    }
+
+    //CRUD: delete all
+    @DeleteMapping("/deleteAllBooks")
+    public ResponseEntity deleteAllBooks (HttpServletRequest request){
+
+        // query to delete all books
+        long qty = bookService.qtyBooks();
+        boolean deleted = bookService.deleteAllBooks();
+
+
+        ActivityLog activityLog = Utilities.createLog(request,"deleteAllBooks",
+                "books", "processing", "api/v1/book/deleteAllBooks", "DELETE");
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        if (deleted) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            headers.add("qtyObjectsDeleted", String.valueOf(qty));
+            return ResponseEntity.accepted().headers(headers).body(null);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(null);
+        }
+    }
+
+    //CRUD: delete by id
+    @DeleteMapping("/deleteBookById/{id}")
+    public ResponseEntity<Book> deleteBookById (HttpServletRequest request, @PathVariable String id){
+
+        Book book = bookService.deleteById(id);
+        ActivityLog activityLog = Utilities.createLog(request,"deleteBookById",
+                "books", "processing", "api/v1/book/deleteBookById", "DELETE");
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        if (book != null) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            return ResponseEntity.accepted().headers(headers).body(book);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(book);
+        }
+
+
+    }
+
+    //CRUD: create
+    @PostMapping(path = "/createBook", consumes = "application/JSON")
+    public ResponseEntity<Book> addBook(HttpServletRequest request, @RequestBody Book book) {
+        //
+        ActivityLog activityLog = Utilities.createLog(request,"createBook",
+                "books", "fail", "api/v1/book/createBook", "POST");
+
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        Book bookCreated = bookService.createBook(book);
+
+
+        if (bookCreated != null) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            return ResponseEntity.accepted().headers(headers).body(book);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(null);
+        }
+    }
+
+    //CRUD: update
+    @PutMapping("/updateBook/{id}")
+    public ResponseEntity<Book> updateBook (HttpServletRequest request, @PathVariable String id,
+                                            @RequestBody Book book){
+
+        Book bookToUpdate = bookService.updateBook(id, book);
+
+        ActivityLog activityLog = Utilities.createLog(request,"updateBook",
+                "books", "processing", "api/v1/book/updateBook", "PUT");
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        if (bookToUpdate != null) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            return ResponseEntity.accepted().headers(headers).body(book);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(book);
+        }
+    }
+
+
 
 
 }
