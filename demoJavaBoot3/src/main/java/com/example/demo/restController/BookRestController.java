@@ -3,6 +3,7 @@ import com.example.demo.model.ActivityLog;
 import com.example.demo.model.Book;
 import com.example.demo.service.ActivityLogService;
 import com.example.demo.service.BookService;
+import com.example.demo.utilities.BooksWrapper;
 import com.example.demo.utilities.Utilities;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +50,6 @@ public class BookRestController {
             return ResponseEntity.internalServerError().headers(headers).body(booksFromService);
         }
     }
-
-
 
     //CRUD: get by id
     @GetMapping("/getBookById/{id}")
@@ -156,6 +155,40 @@ public class BookRestController {
         }
     }
 
+    //CRUD: create
+    @PostMapping(path = "/createBooks", consumes = "application/JSON")
+    public ResponseEntity<Iterable<Book>> addBooks(HttpServletRequest request, @RequestBody BooksWrapper booksWrapper) {
+        ActivityLog activityLog = Utilities.createLog(request,"createBooks",
+                "books", "fail", "api/v1/book/createBooks", "POST");
+
+        HttpHeaders headers = Utilities.createHeader(activityLog);
+
+        Iterable<Book> books = booksWrapper.getBooks();
+        ArrayList createdBooks = new ArrayList<>();
+        for (Book book : books) {
+
+            Book bookCreated = bookService.createBook(book);
+            createdBooks.add(bookCreated);
+        }
+
+        int createdBooksQty = createdBooks.size();
+
+        if (createdBooksQty > 1) {
+            activityLog.setStatus("success");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "success");
+            headers.add("createdBooksQty", String.valueOf(createdBooksQty));
+            headers.add("toCreateBooksQty", String.valueOf(booksWrapper.getQty()) );
+            return ResponseEntity.accepted().headers(headers).body(createdBooks);
+        } else {
+            activityLog.setStatus("fail");
+            activityLogService.addActivityLog(activityLog);
+            headers.add("status", "fail");
+            return ResponseEntity.internalServerError().headers(headers).body(null);
+        }
+
+    }
+
     //CRUD: update
     @PutMapping("/updateBook/{id}")
     public ResponseEntity<Book> updateBook (HttpServletRequest request, @PathVariable String id,
@@ -180,7 +213,6 @@ public class BookRestController {
             return ResponseEntity.internalServerError().headers(headers).body(bookToUpdate);
         }
     }
-
 
 
 

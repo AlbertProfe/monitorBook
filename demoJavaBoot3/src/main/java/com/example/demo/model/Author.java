@@ -16,7 +16,7 @@ public class Author {
 
     @Id
     @Column(name = "AUTHOR_ID")
-    private long authorId;
+    private String authorId;
     @Column(name = "FIRST_NAME")
     private String firstName;
     @Column(name = "LAST_NAME")

@@ -14,12 +14,16 @@ import lombok.NoArgsConstructor;
 public class Book {
 
     @Id
+    @Column(name = "BOOK_ID")
     private String id;
+    @Column(name = "TITLE")
     private String title;
+    @Column(name = "PAGES")
     private int pages;
+    @Column(name = "LANGUAGE")
     private String language;
     //private String author;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "AUTHOR_FK")
     private Author author;
 
