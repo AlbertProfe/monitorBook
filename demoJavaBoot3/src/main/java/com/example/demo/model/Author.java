@@ -33,7 +33,7 @@ public class Author {
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private List<Book> books = new ArrayList<Book>();
 
-    //method to add books to books
+    //method to add book to books
     public void addBook(Book book) {
         this.getBooks().add(book);
         //if (book.getId() != null) book.getId().getBooks().remove(book);

@@ -2,6 +2,7 @@ package com.example.demo.restController;
 import com.example.demo.model.ActivityLog;
 import com.example.demo.model.Book;
 import com.example.demo.service.ActivityLogService;
+import com.example.demo.service.AuthorService;
 import com.example.demo.service.BookService;
 import com.example.demo.utilities.BooksWrapper;
 import com.example.demo.utilities.Utilities;
@@ -21,6 +22,8 @@ public class BookRestController {
 
     @Autowired
     BookService bookService;
+    @Autowired
+    AuthorService authorService;
 
     @Autowired
     ActivityLogService activityLogService;
@@ -166,8 +169,11 @@ public class BookRestController {
         Iterable<Book> books = booksWrapper.getBooks();
         ArrayList createdBooks = new ArrayList<>();
         for (Book book : books) {
-
+            //from JSON book get author and save it to DB by authorRepository via Service
+            authorService.create(book.getAuthor());
+            // once Author exists, save book and assign it to author
             Book bookCreated = bookService.createBook(book);
+
             createdBooks.add(bookCreated);
         }
 

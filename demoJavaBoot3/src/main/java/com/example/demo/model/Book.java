@@ -27,6 +27,8 @@ public class Book {
     //private String author;
 
 
+    // mapping author to book
+    // with joincolumn we assign id object to columns ATUHOR_FK
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "AUTHOR_FK")
     private Author author;
