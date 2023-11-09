@@ -1,9 +1,11 @@
 package com.example.demo.model;
 
+//import javax.persistence.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 
 
 @Entity
@@ -23,6 +25,8 @@ public class Book {
     @Column(name = "LANGUAGE")
     private String language;
     //private String author;
+
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "AUTHOR_FK")
     private Author author;

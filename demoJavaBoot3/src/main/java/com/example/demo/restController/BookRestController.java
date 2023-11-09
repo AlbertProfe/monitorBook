@@ -172,13 +172,13 @@ public class BookRestController {
         }
 
         int createdBooksQty = createdBooks.size();
+        headers.add("response_BooksQty", String.valueOf(createdBooksQty));
+        headers.add("request_BooksQty", String.valueOf(booksWrapper.getQty()) );
 
         if (createdBooksQty > 1) {
             activityLog.setStatus("success");
             activityLogService.addActivityLog(activityLog);
             headers.add("status", "success");
-            headers.add("createdBooksQty", String.valueOf(createdBooksQty));
-            headers.add("toCreateBooksQty", String.valueOf(booksWrapper.getQty()) );
             return ResponseEntity.accepted().headers(headers).body(createdBooks);
         } else {
             activityLog.setStatus("fail");
