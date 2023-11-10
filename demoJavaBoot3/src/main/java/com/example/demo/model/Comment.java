@@ -20,11 +20,11 @@ public class Comment {
     private int rating;
     private String timestamp;
 
-    /*
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "BOOK_FK")
     private Book book;
-    */
+
 
 
 
