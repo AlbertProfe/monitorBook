@@ -15,11 +15,16 @@ public class Comment {
 
     @Id
     private String id;
-    private String commenterName;
-    private String commentText;
+    private String title;
+    private String text;
     private int rating;
     private String timestamp;
 
+    /*
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "BOOK_FK")
+    private Book book;
+    */
 
 
 

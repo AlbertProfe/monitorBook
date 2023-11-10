@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -28,9 +30,19 @@ public class Book {
 
 
     // mapping author to book
-    // with joincolumn we assign id object to columns ATUHOR_FK
+    // with join column we assign id object to columns AUTHOR_FK
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "AUTHOR_FK")
     private Author author;
+
+    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<Comment>();
+
+    //method to add book to books
+    public void addComment(Comment comment) {
+        this.getComments().add(comment);
+        //if (book.getId() != null) book.getId().getBooks().remove(book);
+        //book.setId(this);
+    }
 
 }

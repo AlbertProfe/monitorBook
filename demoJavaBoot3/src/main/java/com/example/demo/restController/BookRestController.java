@@ -1,9 +1,11 @@
 package com.example.demo.restController;
 import com.example.demo.model.ActivityLog;
 import com.example.demo.model.Book;
+import com.example.demo.model.Comment;
 import com.example.demo.service.ActivityLogService;
 import com.example.demo.service.AuthorService;
 import com.example.demo.service.BookService;
+import com.example.demo.service.CommentService;
 import com.example.demo.utilities.BooksWrapper;
 import com.example.demo.utilities.Utilities;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +26,8 @@ public class BookRestController {
     BookService bookService;
     @Autowired
     AuthorService authorService;
+    @Autowired
+    CommentService commentService;
 
     @Autowired
     ActivityLogService activityLogService;
@@ -171,6 +175,10 @@ public class BookRestController {
         for (Book book : books) {
             //from JSON book get author and save it to DB by authorRepository via Service
             authorService.create(book.getAuthor());
+            Iterable<Comment> comments = book.getComments();
+            for (Comment comment: comments) {
+                commentService.create(comment);
+            }
             // once Author exists, save book and assign it to author
             Book bookCreated = bookService.createBook(book);
 
